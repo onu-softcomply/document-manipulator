@@ -1,0 +1,26 @@
+modules:
+  confluence:globalPage:
+    - key: document-manipulator-hello-world
+      resource: main
+      resolver:
+        function: resolver
+      title: document-manipulator
+      route: hello-world
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: static/hello-world/build
+app:
+  id: ari:cloud:ecosystem::app/e6cc2a2d-6f32-4731-bf7d-ea903a9e477e
+permissions:
+  content:
+    scripts:
+      - 'unsafe-inline'
+      - 'unsafe-hashes'
+      - 'unsafe-eval'
+    styles:
+      - 'unsafe-inline'
+  scopes:
+    - read:confluence-content.all
