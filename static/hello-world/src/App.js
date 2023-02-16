@@ -3,39 +3,32 @@ import {invoke, requestConfluence} from '@forge/bridge';
 import ReactHtmlParser from 'react-html-parser';
 import { decode } from 'he';
 import DOMPurify from 'dompurify';
+import '@atlaskit/css-reset';
 
-const storageToView = async () => {
+const getPageView = async () => {
     const expand = [
-        "webresource.superbatch.uris.css",
-        "webresource.superbatch.uris.js",
-        "webresource.uris.css",
-        "webresource.uris.js"
+        "body.view",
+        "body.view.webresource.superbatch.uris.css",
+        "body.view.webresource.superbatch.uris.js",
+        "body.view.webresource.uris.css",
+        "body.view.webresource.uris.js"
     ].join();
-    const storage = `<ac:structured-macro ac:name="jira" ac:schema-version="1" data-layout="full-width" ac:local-id="bbd04cc2-1d32-436b-a59c-5b5ae4538535" ac:macro-id="3d89d721-1b0c-4bee-82b2-0404ab1c2dc5"><ac:parameter ac:name="server">System JIRA</ac:parameter><ac:parameter ac:name="columns">key,summary,type,created,updated,due,assignee,reporter,priority,status,resolution</ac:parameter><ac:parameter ac:name="maximumIssues">20</ac:parameter><ac:parameter ac:name="jqlQuery">project= PerTest1 </ac:parameter><ac:parameter ac:name="serverId">13f7b4d2-45ff-3128-84f4-c948649b144a</ac:parameter></ac:structured-macro><p><ac:structured-macro ac:name="jira" ac:schema-version="1" ac:macro-id="ca5ba96e-483a-41a9-a5d0-8ff2a9aee86a"><ac:parameter ac:name="key">PERTEST1-3</ac:parameter><ac:parameter ac:name="serverId">13f7b4d2-45ff-3128-84f4-c948649b144a</ac:parameter><ac:parameter ac:name="server">System JIRA</ac:parameter></ac:structured-macro></p>`;
-    const body = {
-        "value": storage,
-        "representation": "storage",
-        "content": {
-            "id": 65437697,
-            "version": {"number": 5}
-        }
-    }
-    const response = await requestConfluence(`/wiki/rest/api/contentbody/convert/view?expand=${expand}`,
+    const response = await requestConfluence(`/wiki/rest/api/content/65437697?expand=${expand}`,
         {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body),
+            }
         }
     );
     const renderResponse = await response.json();
-    const wr = renderResponse.webresource;
+
+    const wr = renderResponse.body.view.webresource;
     const jsDependencies = wr.superbatch.uris.js.concat(wr.uris.js || []);
     const cssDependencies = wr.superbatch.uris.css.concat(wr.uris.css || []);
     const page = {
-        body: renderResponse.value,
+        body: renderResponse.body.view.value,
         css: cssDependencies,
         js: jsDependencies
     }
@@ -75,7 +68,7 @@ function App() {
     const [rawHTML, setRawHTML] = useState(null);
 
     useEffect(async () => {
-        setRawHTML(await storageToView())
+        setRawHTML(await getPageView())
         invoke('getText', {example: 'my-invoke-variable'}).then(setData);
     }, []);
 

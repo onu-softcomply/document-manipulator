@@ -15,6 +15,20 @@ resources:
 app:
   id: ari:cloud:ecosystem::app/e6cc2a2d-6f32-4731-bf7d-ea903a9e477e
 permissions:
+  external:
+    images:
+      - '*.atlassian.com'
+      - '*.wp.com'
+      - '*.atlassian.net'
+      - '*.api.atlassian.com'
+      - '*.cloudflare.com'
+      - '*.appspot.com'
+    fetch:
+      client:
+        - '*.atlassian.com'
+        - '*.cloudflare.com'
+        - '*.atlassian.net'
+        - '*.appspot.com'
   content:
     scripts:
       - 'unsafe-inline'
@@ -24,3 +38,4 @@ permissions:
       - 'unsafe-inline'
   scopes:
     - read:confluence-content.all
+    - read:confluence-content.summary
